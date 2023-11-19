@@ -69,10 +69,30 @@ def get_filled_orders():
 
 # post body demo
 # {
+#     "direction": "long"/"close"
 #     "ticker": "512170",
 #     "amount": "1000",
 #     "price": "0.416"
 # }
+
+@app.route('/thsauto/order', methods = ['POST'])
+@interval_call
+def order():
+    auto.active_mian_window()
+    json_data = request.get_json()
+    direction = json_data.get('direction')
+    stock = json_data.get('ticker')
+    amount = json_data.get('amount')
+    price = json_data.get('price')
+    if price is not None:
+        price = float(price)
+
+    if direction == "long":
+        result = auto.buy(stock_no=stock, amount=int(amount), price=price)
+    if direction == "close":
+        result = auto.sell(stock_no=stock, amount=int(amount), price=price)
+    return jsonify(result), 199
+
 @app.route('/thsauto/sell', methods = ['POST'])
 @interval_call
 def sell():
