@@ -67,25 +67,29 @@ def get_filled_orders():
     result = auto.get_filled_orders()
     return jsonify(result), 200
 
-@app.route('/thsauto/sell', methods = ['GET'])
+@app.route('/thsauto/sell', methods = ['POST'])
 @interval_call
 def sell():
     auto.active_mian_window()
-    stock = request.args['stock_no']
-    amount = request.args['amount']
-    price = request.args.get('price', None)
+    json_data = request.get_json()
+    print(json_data)
+    stock = json_data.get('ticker')
+    amount = json_data.get('amount')
+    price = json_data.get('price')
     if price is not None:
         price = float(price)
     result = auto.sell(stock_no=stock, amount=int(amount), price=price)
     return jsonify(result), 200
 
-@app.route('/thsauto/buy', methods = ['GET'])
+@app.route('/thsauto/buy', methods = ['POST'])
 @interval_call
 def buy():
     auto.active_mian_window()
-    stock = request.args['stock_no']
-    amount = request.args['amount']
-    price = request.args.get('price', None)
+    json_data = request.get_json()
+    print(json_data)
+    stock = json_data.get('ticker')
+    amount = json_data.get('amount')
+    price = json_data.get('price')
     if price is not None:
         price = float(price)
     result = auto.buy(stock_no=stock, amount=int(amount), price=price)
