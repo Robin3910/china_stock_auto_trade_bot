@@ -67,6 +67,12 @@ def get_filled_orders():
     result = auto.get_filled_orders()
     return jsonify(result), 200
 
+# post body demo
+# {
+#     "ticker": "512170",
+#     "amount": "1000",
+#     "price": "0.416"
+# }
 @app.route('/thsauto/sell', methods = ['POST'])
 @interval_call
 def sell():
