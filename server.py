@@ -4,6 +4,7 @@ from thsauto import ThsAuto
 import time
 import sys
 import threading
+import requests
 
 import os
 
@@ -20,6 +21,19 @@ def run_client():
 lock = threading.Lock()
 next_time = 0
 interval = 0.5
+
+ip_whitelist = ["52.89.214.238", "34.212.75.30", "54.218.53.128", "52.32.178.7", "192.168.31.109"]
+
+
+@app.before_request
+def process_request():
+    ip = request.remote_addr
+    print("remote ip: ", ip)
+
+    if ip not in ip_whitelist:
+        return 'ip is not in whitelist!', 400
+
+
 def interval_call(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
@@ -86,12 +100,14 @@ def order():
     price = json_data.get('price')
     if price is not None:
         price = float(price)
-
+    result = ""
     if direction == "long":
         result = auto.buy(stock_no=stock, amount=int(amount), price=price)
     if direction == "close":
         result = auto.sell(stock_no=stock, amount=int(amount), price=price)
-    return jsonify(result), 199
+
+    requests.get(f'https://sctapi.ftqq.com/SCT143186TIvKuCgmwWnzzzGQ6mE5qmyFU.send?title=A_{stock}_{amount}')
+    return jsonify(result), 200
 
 @app.route('/thsauto/sell', methods = ['POST'])
 @interval_call
